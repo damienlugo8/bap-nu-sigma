@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:bapfdu.wixsite.com)",
+      "WebFetch(domain:www.fdu.edu)",
+      "Bash(mkdir -p \"C:/Users/dame/Desktop/ClaudeCodeTest/images\")",
+      "Bash(cp \"C:/Users/dame/Downloads/BAP LOGO.jpg\" \"C:/Users/dame/Desktop/ClaudeCodeTest/images/bap-logo.jpg\")",
+      "Bash(cp \"C:/Users/dame/Downloads/NU ANSWERS IMAGE MYM.jpeg\" \"C:/Users/dame/Desktop/ClaudeCodeTest/images/nuanswers-presentation.jpeg\")",
+      "Bash(cp \"C:/Users/dame/Downloads/damien-and-carlo-bap-2026 Mid year Meeting.jpeg\" \"C:/Users/dame/Desktop/ClaudeCodeTest/images/damien-carlo-midyear.jpeg\")",
+      "Bash(cp \"C:/Users/dame/Downloads/DAME HEADSHOT.jfif\" \"C:/Users/dame/Desktop/ClaudeCodeTest/images/damien-headshot.jfif\")",
+      "Bash(start *)",
+      "Bash(git --version)",
+      "Bash(gh --version)",
+      "Bash(gh auth *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(gh repo *)",
+      "Bash(git config *)"
+    ]
+  }
+}
