@@ -202,42 +202,40 @@
   }
   .btn-outline-light:hover { border-color: #fff; background: rgba(255,255,255,.07); }
 
-  .hero-right { position: relative; overflow: hidden; }
+  .hero-right { position: relative; overflow: hidden; background: var(--surface-dark); }
   .hero-slides { position: absolute; inset: 0; }
   .hero-slide {
     position: absolute; inset: 0;
-    background-size: cover; background-position: center;
     opacity: 0;
-    transform: scale(1.06);
-    transition: opacity 1.6s cubic-bezier(.4,0,.2,1);
-    will-change: opacity, transform;
+    transition: opacity 1100ms cubic-bezier(.45,.05,.25,1);
+    will-change: opacity;
   }
-  .hero-slide.is-active {
-    opacity: 1;
-    animation: heroKenBurns 9s ease-out forwards;
-  }
-  @keyframes heroKenBurns {
-    from { transform: scale(1.06); }
-    to   { transform: scale(1.14); }
+  .hero-slide.is-active { opacity: 1; }
+  .hero-slide img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    display: block;
+    user-select: none; -webkit-user-drag: none;
   }
   .hero-right::after {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
+    content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
     background: linear-gradient(to right, var(--surface-dark) 0%, rgba(13,5,7,.45) 18%, transparent 38%);
   }
   .hero-slide-shade {
-    position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(to top, rgba(13,5,7,.55), rgba(13,5,7,0) 45%);
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background: linear-gradient(to top, rgba(13,5,7,.5), rgba(13,5,7,0) 50%);
   }
   .hero-dots {
-    position: absolute; bottom: 1.6rem; right: 1.6rem;
-    display: flex; gap: .55rem; z-index: 2;
+    position: absolute; bottom: 1.6rem; right: 1.6rem; z-index: 3;
+    display: flex; gap: .55rem;
   }
   .hero-dot {
     width: 22px; height: 2px; border-radius: 1px;
-    background: rgba(255,255,255,.28);
-    transition: background .3s, width .3s;
+    background: rgba(255,255,255,.32);
+    transition: background .35s ease, width .35s cubic-bezier(.45,.05,.25,1);
     cursor: pointer; padding: 0;
   }
+  .hero-dot:hover { background: rgba(255,255,255,.55); }
   .hero-dot.is-active { background: var(--gold-lt); width: 38px; }
 
   /* ═══════════════════════════════════════
@@ -833,10 +831,12 @@
   </div>
   <div class="hero-right" aria-label="Chapter moments">
     <div class="hero-slides" id="heroSlides">
-      <div class="hero-slide is-active" style="background-image:url('images/damien-carlo-midyear.jpeg'); background-position: top center;" role="img" aria-label="Damien Lugo and Carlo Trujillo at BAP Mid-Year Meeting, Cincinnati 2026"></div>
-      <div class="hero-slide" style="background-image:url('images/hero-meeting-1.jpg');" role="img" aria-label="Members in a chapter meeting"></div>
-      <div class="hero-slide" style="background-image:url('images/hero-meeting-3.jpg');" role="img" aria-label="Members in a chapter meeting"></div>
-      <div class="hero-slide" style="background-image:url('images/hero-meeting-2.avif');" role="img" aria-label="Members in a chapter meeting"></div>
+      <div class="hero-slide is-active"><img src="images/damien-carlo-midyear.jpeg" alt="Damien Lugo and Carlo Trujillo at the BAP Mid-Year Meeting, Cincinnati 2026" style="object-position:center top"></div>
+      <div class="hero-slide"><img src="images/hero-meeting-1.jpg" alt="Nu Sigma members in a chapter meeting"></div>
+      <div class="hero-slide"><img src="images/stock-meeting-3.jpg" alt="Members gathered around a conference table" loading="lazy"></div>
+      <div class="hero-slide"><img src="images/hero-meeting-3.jpg" alt="Nu Sigma chapter meeting"></div>
+      <div class="hero-slide"><img src="images/stock-meeting-1.jpg" alt="Members taking notes during a meeting" loading="lazy"></div>
+      <div class="hero-slide"><img src="images/stock-meeting-2.jpg" alt="Modern conference room overlooking the city" loading="lazy"></div>
     </div>
     <div class="hero-slide-shade"></div>
     <div class="hero-dots" id="heroDots" role="tablist" aria-label="Hero slide selector"></div>
@@ -1512,7 +1512,19 @@ function handleContact(e) {
   const slides = document.querySelectorAll('#heroSlides .hero-slide');
   const dotsWrap = document.getElementById('heroDots');
   if (!slides.length || !dotsWrap) return;
+
+  // Preload every slide image so the first transition never blinks
+  slides.forEach(s => {
+    const img = s.querySelector('img');
+    if (!img) return;
+    const pre = new Image();
+    pre.src = img.src;
+  });
+
   let idx = 0, timer;
+  const HOLD_MS = 5500;   // time fully visible
+  const FADE_MS = 1100;   // matches CSS transition
+
   slides.forEach((_, i) => {
     const b = document.createElement('button');
     b.className = 'hero-dot' + (i === 0 ? ' is-active' : '');
@@ -1522,18 +1534,25 @@ function handleContact(e) {
     dotsWrap.appendChild(b);
   });
   const dots = dotsWrap.querySelectorAll('.hero-dot');
+
   function go(next, manual) {
+    const target = (next + slides.length) % slides.length;
+    if (target === idx) return;
     slides[idx].classList.remove('is-active');
     dots[idx].classList.remove('is-active');
-    idx = (next + slides.length) % slides.length;
-    // restart Ken Burns by reflowing
-    const s = slides[idx];
-    s.classList.remove('is-active'); void s.offsetWidth; s.classList.add('is-active');
+    idx = target;
+    slides[idx].classList.add('is-active');
     dots[idx].classList.add('is-active');
     if (manual) restart();
   }
   function tick() { go(idx + 1); }
-  function restart() { clearInterval(timer); timer = setInterval(tick, 6500); }
+  function restart() { clearInterval(timer); timer = setInterval(tick, HOLD_MS + FADE_MS); }
+
+  // Pause when tab is hidden so it doesn't drift
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) clearInterval(timer); else restart();
+  });
+
   restart();
 })();
 </script>
