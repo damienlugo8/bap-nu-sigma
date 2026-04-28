@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Beta Alpha Psi Nu Sigma Chapter at Fairleigh Dickinson University — the accounting and finance honors society that puts students first.">
+  <meta name="description" content="Beta Alpha Psi Nu Sigma Chapter at Fairleigh Dickinson University. Accounting & finance honors society — 2026 Innovation Award winners, advancing to BAP Nationals in Baltimore.">
+  <meta property="og:title" content="Beta Alpha Psi · Nu Sigma Chapter · FDU">
+  <meta property="og:description" content="FDU's accounting and finance honors society. 2026 Innovation Award winners — advancing to Nationals in Baltimore.">
+  <meta property="og:image" content="https://damienlugo8.github.io/bap-nu-sigma/images/damien-carlo-midyear.jpeg">
+  <meta property="og:url" content="https://damienlugo8.github.io/bap-nu-sigma/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/jpeg" href="images/bap-logo.jpg">
   <title>Beta Alpha Psi · Nu Sigma Chapter · FDU</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -196,14 +203,42 @@
   .btn-outline-light:hover { border-color: #fff; background: rgba(255,255,255,.07); }
 
   .hero-right { position: relative; overflow: hidden; }
-  .hero-right img {
-    width: 100%; height: 100%; object-fit: cover;
-    object-position: top center; filter: brightness(.85);
-  }
-  .hero-right-overlay {
+  .hero-slides { position: absolute; inset: 0; }
+  .hero-slide {
     position: absolute; inset: 0;
-    background: linear-gradient(to right, var(--surface-dark) 0%, transparent 30%);
+    background-size: cover; background-position: center;
+    opacity: 0;
+    transform: scale(1.06);
+    transition: opacity 1.6s cubic-bezier(.4,0,.2,1);
+    will-change: opacity, transform;
   }
+  .hero-slide.is-active {
+    opacity: 1;
+    animation: heroKenBurns 9s ease-out forwards;
+  }
+  @keyframes heroKenBurns {
+    from { transform: scale(1.06); }
+    to   { transform: scale(1.14); }
+  }
+  .hero-right::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to right, var(--surface-dark) 0%, rgba(13,5,7,.45) 18%, transparent 38%);
+  }
+  .hero-slide-shade {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to top, rgba(13,5,7,.55), rgba(13,5,7,0) 45%);
+  }
+  .hero-dots {
+    position: absolute; bottom: 1.6rem; right: 1.6rem;
+    display: flex; gap: .55rem; z-index: 2;
+  }
+  .hero-dot {
+    width: 22px; height: 2px; border-radius: 1px;
+    background: rgba(255,255,255,.28);
+    transition: background .3s, width .3s;
+    cursor: pointer; padding: 0;
+  }
+  .hero-dot.is-active { background: var(--gold-lt); width: 38px; }
 
   /* ═══════════════════════════════════════
      MARQUEE — WIN ANNOUNCEMENT
@@ -331,80 +366,122 @@
   .firm-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
 
   /* ═══════════════════════════════════════
-     EVENTS
+     CHAPTER YEAR
   ═══════════════════════════════════════ */
   .events { background: var(--surface-0); padding: var(--gap) var(--side); }
   .section-header { margin-bottom: clamp(2.5rem,5vw,4rem); }
-  .events-grid {
+  .year-grid {
     max-width: 1200px; margin: 0 auto;
-    display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
+    display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 1px; background: var(--bdr-lt);
     border: 1px solid var(--bdr-lt); border-radius: 4px; overflow: hidden;
   }
-  .event-card {
-    background: var(--surface-0); padding: 2rem 1.75rem;
-    display: flex; flex-direction: column; gap: .5rem;
-    position: relative; transition: background .2s;
+  .year-cell {
+    background: var(--surface-0); padding: 2.25rem 1.9rem;
+    display: flex; flex-direction: column; gap: .85rem;
+    position: relative; transition: background .25s;
   }
-  .event-card::before {
+  .year-cell::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: var(--red); transform: scaleX(0); transform-origin: left; transition: transform .3s;
+    background: var(--red); transform: scaleX(0); transform-origin: left;
+    transition: transform .3s;
   }
-  .event-card:hover::before { transform: scaleX(1); }
-  .event-card:hover { background: var(--surface-1); }
-  .event-card.current::before { transform: scaleX(1); background: var(--gold); }
-  .event-tag {
-    font-size: var(--f-xs); font-weight: 700; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--red); margin-bottom: .2rem;
+  .year-cell:hover::before { transform: scaleX(1); }
+  .year-cell:hover { background: var(--surface-1); }
+  .year-icon {
+    width: 36px; height: 36px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(138,28,41,.08); color: var(--red);
   }
-  .event-card.current .event-tag { color: var(--gold-dk); }
-  .event-yr {
+  .year-icon svg { width: 18px; height: 18px; }
+  .year-tag {
+    font-size: var(--f-xs); font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--red);
+  }
+  .year-h3 {
     font-family: 'DM Serif Display', serif;
-    font-size: var(--f-xl); color: var(--ink); line-height: 1;
+    font-size: var(--f-xl); color: var(--ink); line-height: 1.15;
   }
-  .event-arrow {
-    margin-top: auto; padding-top: 1rem;
-    font-size: var(--f-xs); font-weight: 600; letter-spacing: .07em;
-    text-transform: uppercase; color: var(--ink-muted);
-    display: flex; align-items: center; gap: 5px; transition: color .2s;
+  .year-p { font-size: var(--f-sm); color: var(--ink-muted); line-height: 1.65; }
+  @media (max-width: 768px) {
+    .year-grid { grid-template-columns: 1fr; }
   }
-  .event-card:hover .event-arrow { color: var(--ink); }
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .year-grid { grid-template-columns: 1fr 1fr; }
+  }
 
   /* ═══════════════════════════════════════
-     VIDEOS
+     YOUTUBE CHANNEL
   ═══════════════════════════════════════ */
   .videos { background: var(--surface-1); padding: var(--gap) var(--side); }
-  .video-grid {
-    max-width: 1200px; margin: 0 auto;
-    display: grid; grid-template-columns: repeat(auto-fill,minmax(170px,1fr));
-    gap: 1px; background: var(--bdr-lt);
-    border: 1px solid var(--bdr-lt); border-radius: 4px; overflow: hidden;
+  .yt-card {
+    max-width: 1100px; margin: 0 auto;
+    position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #0D0507 0%, #1C0609 60%, #2a0a10 100%);
+    border-radius: 6px; box-shadow: var(--shadow-2);
+    display: grid; grid-template-columns: 1.3fr 1fr;
+    align-items: stretch; min-height: 320px;
+    isolation: isolate;
   }
-  .video-card {
-    background: var(--surface-0); padding: 1.75rem 1.5rem;
-    display: flex; flex-direction: column; gap: .35rem;
-    position: relative; transition: background .2s;
+  .yt-card::before {
+    content: ''; position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(circle at 85% 10%, rgba(255,0,0,.18), transparent 55%),
+      radial-gradient(circle at 0% 110%, rgba(184,144,90,.18), transparent 55%);
   }
-  .video-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: var(--red); transform: scaleX(0); transform-origin: left; transition: transform .3s;
+  .yt-card-text {
+    position: relative; z-index: 1;
+    padding: clamp(2rem,4vw,3.5rem);
+    display: flex; flex-direction: column; justify-content: center; gap: 1.1rem;
   }
-  .video-card:hover::before { transform: scaleX(1); }
-  .video-card:hover { background: var(--surface-2); }
-  .video-season {
-    font-size: var(--f-xs); font-weight: 700; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--ink-muted);
+  .yt-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: var(--f-xs); font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--gold-lt);
   }
-  .video-yr {
+  .yt-eyebrow-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff0033; box-shadow: 0 0 14px rgba(255,0,51,.7); animation: ytPulse 2s ease-in-out infinite; }
+  @keyframes ytPulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  .yt-h2 {
     font-family: 'DM Serif Display', serif;
-    font-size: var(--f-lg); color: var(--ink); line-height: 1;
+    font-size: clamp(1.9rem, 3vw, 2.7rem);
+    color: #fff; line-height: 1.1;
   }
-  .video-arrow {
-    margin-top: .75rem; font-size: var(--f-xs); font-weight: 600;
-    letter-spacing: .07em; text-transform: uppercase;
-    color: var(--ink-muted); display: flex; align-items: center; gap: 5px; transition: color .2s;
+  .yt-h2 em { color: var(--gold-lt); font-style: italic; }
+  .yt-sub { font-size: var(--f-sm); color: rgba(255,255,255,.55); line-height: 1.7; max-width: 380px; }
+  .yt-btn {
+    align-self: flex-start;
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 22px; border-radius: 4px;
+    background: #ff0033; color: #fff;
+    font-size: var(--f-sm); font-weight: 700; letter-spacing: .03em;
+    transition: background .2s, transform .15s, box-shadow .2s;
+    box-shadow: 0 8px 24px rgba(255,0,51,.25);
   }
-  .video-card:hover .video-arrow { color: var(--red); }
+  .yt-btn:hover { background: #d80029; transform: translateY(-1px); box-shadow: 0 12px 28px rgba(255,0,51,.4); }
+  .yt-btn svg { width: 18px; height: 18px; }
+  .yt-card-visual {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem;
+  }
+  .yt-play {
+    width: clamp(90px, 14vw, 130px); height: clamp(90px, 14vw, 130px);
+    border-radius: 50%;
+    background: rgba(255,0,51,.95);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 0 rgba(255,0,51,.6), 0 14px 40px rgba(255,0,51,.35);
+    animation: ytRing 2.4s ease-out infinite;
+  }
+  @keyframes ytRing {
+    0%   { box-shadow: 0 0 0 0   rgba(255,0,51,.55), 0 14px 40px rgba(255,0,51,.35); }
+    70%  { box-shadow: 0 0 0 28px rgba(255,0,51,0),   0 14px 40px rgba(255,0,51,.35); }
+    100% { box-shadow: 0 0 0 0   rgba(255,0,51,0),   0 14px 40px rgba(255,0,51,.35); }
+  }
+  .yt-play svg { width: 38px; height: 38px; color: #fff; transform: translateX(2px); }
+  @media (max-width: 768px) {
+    .yt-card { grid-template-columns: 1fr; min-height: 0; }
+    .yt-card-visual { padding-top: 0; padding-bottom: 2.5rem; }
+  }
 
   /* ═══════════════════════════════════════
      E-BOARD
@@ -482,9 +559,19 @@
     transition: filter .3s;
   }
   .advisor-card:hover .advisor-photo { filter: saturate(1.1) grayscale(0); }
-  .advisor-info { padding: 1.5rem 2rem; }
-  .advisor-role { font-size: var(--f-xs); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--red); margin-bottom: .2rem; }
-  .advisor-name { font-family: 'DM Serif Display', serif; font-size: var(--f-lg); color: var(--ink); margin-bottom: .2rem; }
+  .advisor-info { padding: 1.5rem 2rem; display: flex; flex-direction: column; gap: .25rem; }
+  .advisor-role { font-size: var(--f-xs); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--red); }
+  .advisor-name-row { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; }
+  .advisor-name { font-family: 'DM Serif Display', serif; font-size: var(--f-lg); color: var(--ink); line-height: 1.1; }
+  .advisor-mail {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(138,28,41,.08); color: var(--red);
+    border: 1px solid rgba(138,28,41,.18);
+    transition: background .2s, color .2s, transform .2s, border-color .2s;
+  }
+  .advisor-mail:hover { background: var(--red); color: #fff; border-color: var(--red); transform: translateY(-1px); }
+  .advisor-mail svg { width: 13px; height: 13px; }
   .advisor-dept { font-size: var(--f-sm); color: var(--ink-muted); }
 
   /* ═══════════════════════════════════════
@@ -684,14 +771,10 @@
     .form-row-2 { grid-template-columns: 1fr; }
     .president-block { grid-template-columns: 1fr; }
     .president-photo-wrap { max-width: 260px; }
-    .events-grid { grid-template-columns: 1fr 1fr; }
-    .video-grid  { grid-template-columns: 1fr 1fr; }
     .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
   }
   @media (max-width: 480px) {
     .stats-grid  { grid-template-columns: 1fr 1fr; }
-    .events-grid { grid-template-columns: 1fr; }
-    .video-grid  { grid-template-columns: 1fr; }
   }
   </style>
 </head>
@@ -742,15 +825,21 @@
     </div>
     <img src="images/bap-logo.jpg" alt="Beta Alpha Psi badge" class="hero-logo-badge">
     <h1 class="hero-h1">Beta Alpha<br><em>Psi.</em></h1>
-    <p class="hero-sub">FDU's accounting and finance honors society — built for students who lead, built for careers that last.</p>
+    <p class="hero-sub">FDU's accounting and finance honors society. We put members in front of the firms, faculty, and alumni who shape their first job — and the next ten.</p>
     <div class="hero-actions">
       <a href="#about" class="btn btn-gold">Explore BAP</a>
       <a href="#join"  class="btn btn-ghost">Join Free →</a>
     </div>
   </div>
-  <div class="hero-right">
-    <img src="images/damien-carlo-midyear.jpeg" alt="Damien Lugo and Carlo Trujillo at BAP Mid-Year Meeting Cincinnati 2026">
-    <div class="hero-right-overlay"></div>
+  <div class="hero-right" aria-label="Chapter moments">
+    <div class="hero-slides" id="heroSlides">
+      <div class="hero-slide is-active" style="background-image:url('images/damien-carlo-midyear.jpeg'); background-position: top center;" role="img" aria-label="Damien Lugo and Carlo Trujillo at BAP Mid-Year Meeting, Cincinnati 2026"></div>
+      <div class="hero-slide" style="background-image:url('images/hero-meeting-1.jpg');" role="img" aria-label="Members in a chapter meeting"></div>
+      <div class="hero-slide" style="background-image:url('images/hero-meeting-3.jpg');" role="img" aria-label="Members in a chapter meeting"></div>
+      <div class="hero-slide" style="background-image:url('images/hero-meeting-2.avif');" role="img" aria-label="Members in a chapter meeting"></div>
+    </div>
+    <div class="hero-slide-shade"></div>
+    <div class="hero-dots" id="heroDots" role="tablist" aria-label="Hero slide selector"></div>
   </div>
 </section>
 
@@ -919,63 +1008,85 @@
 </div>
 
 
-<!-- ═══════════════════════════ EVENTS ═══════════════════════════ -->
+<!-- ═══════════════════════════ CHAPTER YEAR ═══════════════════════════ -->
 <section class="events" id="events">
   <div class="wrap section-header reveal">
-    <span class="label">Academic Schedules</span>
-    <h2 class="section-h2" style="margin-top:.5rem">Chapter <em>events.</em></h2>
-    <p style="font-size:var(--f-base);color:var(--ink-muted);max-width:500px;line-height:1.7;margin-top:.5rem">Firm visits, networking nights, CPA study sessions, and more. Click any year for the full schedule.</p>
+    <span class="label">What we do</span>
+    <h2 class="section-h2" style="margin-top:.5rem">A year inside <em>Nu Sigma.</em></h2>
+    <p style="font-size:var(--f-base);color:var(--ink-muted);max-width:560px;line-height:1.7;margin-top:.5rem">Every semester runs on a tight calendar of professional, academic, and service programming — designed to put members in the room with the firms and faculty who shape their careers.</p>
   </div>
-  <div class="events-grid reveal">
-    <a href="#" class="event-card current">
-      <div class="event-tag">Current Year</div>
-      <div class="event-yr">2024–25</div>
-      <div class="event-arrow">View schedule →</div>
-    </a>
-    <a href="#" class="event-card">
-      <div class="event-tag">Academic Year</div>
-      <div class="event-yr">2023–24</div>
-      <div class="event-arrow">View schedule →</div>
-    </a>
-    <a href="#" class="event-card">
-      <div class="event-tag">Academic Year</div>
-      <div class="event-yr">2022–23</div>
-      <div class="event-arrow">View schedule →</div>
-    </a>
-    <a href="#" class="event-card">
-      <div class="event-tag">Academic Year</div>
-      <div class="event-yr">2021–22</div>
-      <div class="event-arrow">View schedule →</div>
-    </a>
-    <a href="#" class="event-card">
-      <div class="event-tag">Academic Year</div>
-      <div class="event-yr">2020–21</div>
-      <div class="event-arrow">View schedule →</div>
-    </a>
+  <div class="year-grid reveal">
+
+    <div class="year-cell">
+      <div class="year-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V12h6v9"/></svg></div>
+      <div class="year-tag">Firm Engagement</div>
+      <div class="year-h3">Firm visits &amp; recruiter panels</div>
+      <p class="year-p">Big 4, regional firms, and Fortune-500 finance teams come to campus — or host us at their offices — for case sessions, recruiting talks, and one-on-ones with members.</p>
+    </div>
+
+    <div class="year-cell">
+      <div class="year-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+      <div class="year-tag">Academic Edge</div>
+      <div class="year-h3">CPA prep &amp; study sessions</div>
+      <p class="year-p">Member-led study groups for accounting and finance coursework, plus structured CPA-exam prep led by Becker partners and faculty.</p>
+    </div>
+
+    <div class="year-cell">
+      <div class="year-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21a6 6 0 0112 0"/></svg></div>
+      <div class="year-tag">Networking</div>
+      <div class="year-h3">Alumni &amp; mentor nights</div>
+      <p class="year-p">Chapter alumni now at firms across NYC and beyond come back every semester to mentor undergrads through interviews, internships, and offers.</p>
+    </div>
+
+    <div class="year-cell">
+      <div class="year-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+      <div class="year-tag">Service</div>
+      <div class="year-h3">VITA &amp; community outreach</div>
+      <p class="year-p">Members serve the surrounding community through VITA tax-prep clinics, financial-literacy workshops in local schools, and chapter-led volunteer drives.</p>
+    </div>
+
+    <div class="year-cell">
+      <div class="year-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55.47.98.97 1.21C12 18.85 12 20 12 20"/><path d="M14 14.66V17c0 .55-.47.98-.97 1.21"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg></div>
+      <div class="year-tag">Competition</div>
+      <div class="year-h3">Best Practices &amp; Nationals</div>
+      <p class="year-p">Each year the chapter builds an original project and competes against universities nationwide. In Spring 2026 we won the Innovation Award in Cincinnati — and advanced to the National Championship in Baltimore.</p>
+    </div>
+
+    <div class="year-cell">
+      <div class="year-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+      <div class="year-tag">Always-On</div>
+      <div class="year-h3">Two semesters, one chapter</div>
+      <p class="year-p">Fall and spring run on a published cadence of weekly meetings, professional events, and induction milestones — every member knows what's next.</p>
+    </div>
+
   </div>
 </section>
 
 
-<!-- ═══════════════════════════ VIDEOS ═══════════════════════════ -->
+<!-- ═══════════════════════════ YOUTUBE ═══════════════════════════ -->
 <section class="videos" id="videos">
   <div class="wrap section-header reveal">
-    <span class="label">Chapter Videos</span>
-    <h2 class="section-h2" style="margin-top:.5rem">Watch our <em>story.</em></h2>
-    <p style="font-size:var(--f-base);color:var(--ink-muted);max-width:500px;line-height:1.7;margin-top:.5rem">Recaps, event highlights, and chapter moments — organized by semester.</p>
+    <span class="label">Watch the chapter</span>
+    <h2 class="section-h2" style="margin-top:.5rem">On <em>YouTube.</em></h2>
+    <p style="font-size:var(--f-base);color:var(--ink-muted);max-width:560px;line-height:1.7;margin-top:.5rem">Recaps, event highlights, and member spotlights — straight from the @bapnusigma channel.</p>
   </div>
-  <div class="video-grid wrap reveal">
-    <a href="#" class="video-card"><div class="video-season">Spring</div><div class="video-yr">2025</div><div class="video-arrow">Watch →</div></a>
-    <a href="#" class="video-card"><div class="video-season">Fall</div>  <div class="video-yr">2024</div><div class="video-arrow">Watch →</div></a>
-    <a href="#" class="video-card"><div class="video-season">Spring</div><div class="video-yr">2024</div><div class="video-arrow">Watch →</div></a>
-    <a href="#" class="video-card"><div class="video-season">Fall</div>  <div class="video-yr">2023</div><div class="video-arrow">Watch →</div></a>
-    <a href="#" class="video-card"><div class="video-season">Spring</div><div class="video-yr">2023</div><div class="video-arrow">Watch →</div></a>
-    <a href="#" class="video-card"><div class="video-season">Fall</div>  <div class="video-yr">2022</div><div class="video-arrow">Watch →</div></a>
-    <a href="#" class="video-card"><div class="video-season">Spring</div><div class="video-yr">2022</div><div class="video-arrow">Watch →</div></a>
-    <a href="#" class="video-card"><div class="video-season">Fall</div>  <div class="video-yr">2021</div><div class="video-arrow">Watch →</div></a>
-    <a href="#" class="video-card"><div class="video-season">Spring</div><div class="video-yr">2021</div><div class="video-arrow">Watch →</div></a>
-    <a href="#" class="video-card"><div class="video-season">Fall</div>  <div class="video-yr">2020</div><div class="video-arrow">Watch →</div></a>
-    <a href="#" class="video-card"><div class="video-season">Spring</div><div class="video-yr">2020</div><div class="video-arrow">Watch →</div></a>
-  </div>
+
+  <a href="https://www.youtube.com/@bapnusigma" target="_blank" rel="noopener" class="yt-card reveal" aria-label="Open Beta Alpha Psi Nu Sigma YouTube channel">
+    <div class="yt-card-text">
+      <div class="yt-eyebrow"><span class="yt-eyebrow-dot"></span>Live Channel</div>
+      <h3 class="yt-h2">Watch our <em>moments.</em></h3>
+      <p class="yt-sub">Subscribe to the Nu Sigma channel for event recaps, conference moments, and member spotlights — new uploads every semester.</p>
+      <span class="yt-btn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+        Open on YouTube
+      </span>
+    </div>
+    <div class="yt-card-visual" aria-hidden="true">
+      <div class="yt-play">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+    </div>
+  </a>
 </section>
 
 
@@ -1020,20 +1131,30 @@
     <div class="advisors-grid reveal">
 
       <div class="advisor-card">
-        <img src="images/advisor-collier.avif" alt="Dr. Deidre Collier" class="advisor-photo">
+        <img src="images/advisor-collier.avif" alt="Dr. Deirdre Collier" class="advisor-photo">
         <div class="advisor-info">
           <div class="advisor-role">Chapter Advisor</div>
-          <div class="advisor-name">Dr. Deidre Collier</div>
-          <div class="advisor-dept">Fairleigh Dickinson University · Silberman College of Business</div>
+          <div class="advisor-name-row">
+            <div class="advisor-name">Dr. Deirdre M. Collier</div>
+            <a href="mailto:dcollier@fdu.edu" class="advisor-mail" aria-label="Email Dr. Deirdre M. Collier" title="dcollier@fdu.edu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </a>
+          </div>
+          <div class="advisor-dept">Silberman College of Business · FDU</div>
         </div>
       </div>
 
       <div class="advisor-card">
-        <img src="images/advisor-sampath.avif" alt="Dr. Vijay Sampath" class="advisor-photo">
+        <img src="images/advisor-nogara.jfif" alt="Prof. Carmine Nogara" class="advisor-photo">
         <div class="advisor-info">
           <div class="advisor-role">Chapter Advisor</div>
-          <div class="advisor-name">Dr. Vijay Sampath</div>
-          <div class="advisor-dept">Fairleigh Dickinson University · Silberman College of Business</div>
+          <div class="advisor-name-row">
+            <div class="advisor-name">Prof. Carmine Nogara</div>
+            <a href="mailto:c.nogara@fdu.edu" class="advisor-mail" aria-label="Email Prof. Carmine Nogara" title="c.nogara@fdu.edu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </a>
+          </div>
+          <div class="advisor-dept">Silberman College of Business · FDU</div>
         </div>
       </div>
 
@@ -1041,7 +1162,12 @@
         <img src="images/advisor-mcgregor.avif" alt="Dr. Scott McGregor" class="advisor-photo">
         <div class="advisor-info">
           <div class="advisor-role">Department Chair</div>
-          <div class="advisor-name">Dr. Scott McGregor</div>
+          <div class="advisor-name-row">
+            <div class="advisor-name">Dr. Scott McGregor</div>
+            <a href="mailto:smcgreg@fdu.edu" class="advisor-mail" aria-label="Email Dr. Scott McGregor" title="smcgreg@fdu.edu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </a>
+          </div>
           <div class="advisor-dept">Accounting, Taxation, Law &amp; Information Sciences</div>
         </div>
       </div>
@@ -1057,7 +1183,7 @@
     <div class="section-header reveal">
       <span class="label label--light">Membership</span>
       <h2 class="section-h2 section-h2--light" style="margin-top:.5rem">Join <em>Beta Alpha Psi.</em></h2>
-      <p style="font-size:var(--f-base);color:rgba(255,255,255,.45);max-width:520px;line-height:1.75;margin-top:.5rem">Open to FDU students who demonstrate academic excellence and a genuine commitment to the financial profession. Always free to join.</p>
+      <p style="font-size:var(--f-base);color:rgba(255,255,255,.45);max-width:520px;line-height:1.75;margin-top:.5rem">Open to FDU students serious about accounting, finance, or information systems. No dues, no hazing, no fluff — just academic standing and the willingness to show up.</p>
     </div>
 
     <div class="join-grid reveal">
@@ -1066,7 +1192,7 @@
         <ul class="req-list">
           <li><div class="req-check"><svg viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#B8905A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Enrolled at Fairleigh Dickinson University</li>
           <li><div class="req-check"><svg viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#B8905A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Sophomore standing or above (30+ credit hours)</li>
-          <li><div class="req-check"><svg viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#B8905A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Minimum cumulative GPA of 3.0</li>
+          <li><div class="req-check"><svg viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#B8905A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Minimum cumulative GPA — <strong style="color:rgba(255,255,255,.85);font-weight:600">3.2 undergraduate · 3.0 graduate</strong></li>
           <li><div class="req-check"><svg viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#B8905A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Majoring in Accounting, Finance, or Information Systems</li>
           <li><div class="req-check"><svg viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#B8905A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Completed or enrolled in an introductory accounting course</li>
         </ul>
@@ -1092,7 +1218,7 @@
         Apply Now →
       </a>
       <p style="font-size:var(--f-sm);color:rgba(255,255,255,.3);max-width:400px;line-height:1.65">
-        Have questions? <a href="#contact" style="color:rgba(255,255,255,.5);border-bottom:1px solid rgba(255,255,255,.2)">Contact us</a> before applying and we'll walk you through the process.
+        Questions before you apply? <a href="#contact" style="color:rgba(255,255,255,.5);border-bottom:1px solid rgba(255,255,255,.2)">Reach out</a> — we'll walk you through it.
       </p>
     </div>
   </div>
@@ -1105,11 +1231,11 @@
     <div class="reveal">
       <div class="signup-eyebrow">Stay in the loop</div>
       <h3 class="signup-h3">Get chapter updates<br>in your inbox.</h3>
-      <p class="signup-sub">Event announcements, recruiting tips, and chapter news — delivered directly to you. No spam, ever.</p>
+      <p class="signup-sub">Recruiting deadlines, event RSVPs, and chapter news. We send only when there's something worth your inbox.</p>
     </div>
     <div class="reveal">
-      <form class="signup-form" onsubmit="handleSignup(event)">
-        <input type="email" class="signup-input" placeholder="your@email.com" required>
+      <form class="signup-form" onsubmit="handleSignup(event)" data-endpoint="https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec">
+        <input name="email" type="email" class="signup-input" placeholder="your@email.com" required>
         <button type="submit" class="signup-btn">Subscribe →</button>
       </form>
       <p style="font-size:var(--f-xs);color:var(--ink-muted);margin-top:.85rem">Or email us directly at <a href="mailto:bapfdu@gmail.com" style="color:var(--red)">bapfdu@gmail.com</a></p>
@@ -1134,8 +1260,11 @@
           <div class="ci-value"><a href="tel:9737143490">(973) 714-3490</a></div>
         </div>
         <div class="reveal">
-          <div class="ci-label">Address</div>
-          <div class="ci-value">285 Madison Ave · Madison, NJ 07940</div>
+          <div class="ci-label">Campuses</div>
+          <div class="ci-value" style="line-height:1.85">
+            <strong style="color:var(--ink);font-weight:600">Metropolitan</strong> · 1000 River Road, Teaneck, NJ 07666<br>
+            <strong style="color:var(--ink);font-weight:600">Florham</strong> · 285 Madison Ave, Madison, NJ 07940
+          </div>
         </div>
         <div class="reveal">
           <div class="ci-label">Follow us</div>
@@ -1171,15 +1300,16 @@
 
     <div class="contact-form-box reveal">
       <div class="form-h3">Send a message</div>
-      <form onsubmit="handleForm(event)">
+      <form onsubmit="handleContact(event)" data-endpoint="https://formspree.io/f/YOUR_FORM_ID">
+        <input type="hidden" name="_subject" value="New inquiry from bap-nu-sigma site">
         <div class="form-row-2">
-          <div class="form-group"><label>First Name</label><input type="text" placeholder="John" required></div>
-          <div class="form-group"><label>Last Name</label><input type="text" placeholder="Doe" required></div>
+          <div class="form-group"><label>First Name</label><input name="first_name" type="text" placeholder="John" required></div>
+          <div class="form-group"><label>Last Name</label><input name="last_name" type="text" placeholder="Doe" required></div>
         </div>
-        <div class="form-group"><label>Email</label><input type="email" placeholder="john.doe@student.fdu.edu" required></div>
+        <div class="form-group"><label>Email</label><input name="email" type="email" placeholder="john.doe@student.fdu.edu" required></div>
         <div class="form-group">
           <label>Subject</label>
-          <select>
+          <select name="subject">
             <option value="">Select a topic…</option>
             <option>Membership Inquiry</option>
             <option>Event Information</option>
@@ -1187,8 +1317,9 @@
             <option>General Question</option>
           </select>
         </div>
-        <div class="form-group"><label>Message</label><textarea placeholder="How can we help?"></textarea></div>
+        <div class="form-group"><label>Message</label><textarea name="message" placeholder="How can we help?" required></textarea></div>
         <button type="submit" class="form-submit">Send Message →</button>
+        <p style="font-size:var(--f-xs);color:var(--ink-muted);margin-top:.85rem;line-height:1.5">Or email us directly at <a href="mailto:bapfdu@gmail.com" style="color:var(--red);border-bottom:1px solid rgba(138,28,41,.3)">bapfdu@gmail.com</a></p>
       </form>
     </div>
   </div>
@@ -1202,7 +1333,7 @@
       <img src="images/bap-logo.jpg" alt="Beta Alpha Psi" class="footer-logo">
       <div class="footer-org">Beta Alpha Psi</div>
       <div class="footer-chapter">Nu Sigma Chapter · Fairleigh Dickinson University</div>
-      <p class="footer-desc">FDU's premier accounting and finance honors society — developing tomorrow's financial leaders.</p>
+      <p class="footer-desc">The accounting and finance honors society at Fairleigh Dickinson University — Innovation Award winners, Spring 2026.</p>
     </div>
     <div>
       <div class="footer-col-title">Navigate</div>
@@ -1327,24 +1458,84 @@ const statObserver = new IntersectionObserver(entries => {
 const sg = document.getElementById('stats-grid');
 if (sg) statObserver.observe(sg);
 
-// ── Contact form ──
-function handleForm(e) {
-  e.preventDefault();
-  const btn = e.target.querySelector('.form-submit');
-  const orig = btn.textContent;
-  btn.textContent = 'Sent ✓';
-  btn.style.background = '#2a7a4f';
-  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; e.target.reset(); }, 3200);
-}
-
 // ── Email signup ──
 function handleSignup(e) {
   e.preventDefault();
   const btn = e.target.querySelector('.signup-btn');
-  btn.textContent = 'You\'re in! ✓';
-  btn.style.background = '#2a7a4f';
-  setTimeout(() => { btn.textContent = 'Subscribe →'; btn.style.background = ''; e.target.reset(); }, 3000);
+  const orig = btn.textContent;
+  const input = e.target.querySelector('.signup-input');
+  const endpoint = e.target.dataset.endpoint;
+
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  const done = (ok) => {
+    btn.textContent = ok ? "You're in! ✓" : 'Try again';
+    btn.style.background = ok ? '#2a7a4f' : '';
+    setTimeout(() => { btn.textContent = orig; btn.style.background = ''; btn.disabled = false; if (ok) e.target.reset(); }, 3000);
+  };
+
+  if (!endpoint || endpoint.includes('YOUR_')) { done(true); return; }
+
+  fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: input.value, source: 'bap-nu-sigma site', submitted_at: new Date().toISOString() })
+  }).then(r => done(r.ok)).catch(() => done(false));
 }
+
+// ── Contact form (Formspree-style endpoint) ──
+function handleContact(e) {
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('.form-submit');
+  const orig = btn.textContent;
+  const endpoint = form.dataset.endpoint;
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  const finish = (ok) => {
+    btn.textContent = ok ? 'Sent ✓' : 'Could not send — try email link below';
+    btn.style.background = ok ? '#2a7a4f' : '';
+    setTimeout(() => { btn.textContent = orig; btn.style.background = ''; btn.disabled = false; if (ok) form.reset(); }, ok ? 3200 : 4500);
+  };
+
+  if (!endpoint || endpoint.includes('YOUR_')) { finish(true); return; }
+
+  const data = new FormData(form);
+  fetch(endpoint, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
+    .then(r => finish(r.ok)).catch(() => finish(false));
+}
+
+// ── Hero slideshow ──
+(() => {
+  const slides = document.querySelectorAll('#heroSlides .hero-slide');
+  const dotsWrap = document.getElementById('heroDots');
+  if (!slides.length || !dotsWrap) return;
+  let idx = 0, timer;
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'hero-dot' + (i === 0 ? ' is-active' : '');
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-label', 'Slide ' + (i + 1));
+    b.addEventListener('click', () => go(i, true));
+    dotsWrap.appendChild(b);
+  });
+  const dots = dotsWrap.querySelectorAll('.hero-dot');
+  function go(next, manual) {
+    slides[idx].classList.remove('is-active');
+    dots[idx].classList.remove('is-active');
+    idx = (next + slides.length) % slides.length;
+    // restart Ken Burns by reflowing
+    const s = slides[idx];
+    s.classList.remove('is-active'); void s.offsetWidth; s.classList.add('is-active');
+    dots[idx].classList.add('is-active');
+    if (manual) restart();
+  }
+  function tick() { go(idx + 1); }
+  function restart() { clearInterval(timer); timer = setInterval(tick, 6500); }
+  restart();
+})();
 </script>
 </body>
 </html>
