@@ -34,18 +34,18 @@
       will-change: transform, width, height, opacity;
     }
     .cursor-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--gold-lt);
-      mix-blend-mode: difference;
-      transition: width .2s, height .2s, background .2s;
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.35), 0 0 8px rgba(0,0,0,.25);
+      transition: width .15s, height .15s, opacity .15s;
     }
     .cursor-ring {
-      width: 36px; height: 36px; border-radius: 50%;
-      border: 1.5px solid rgba(184,144,90,.55);
-      mix-blend-mode: difference;
-      transition: width .25s cubic-bezier(.16,1,.3,1),
-                  height .25s cubic-bezier(.16,1,.3,1),
-                  border-color .2s, background .2s, opacity .25s;
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,.85);
+      box-shadow: 0 0 0 1px rgba(0,0,0,.18);
+      transition: width .22s cubic-bezier(.16,1,.3,1),
+                  height .22s cubic-bezier(.16,1,.3,1),
+                  border-color .18s, background .18s, opacity .22s;
     }
     body.cursor-hover .cursor-dot { width: 0; height: 0; }
     body.cursor-hover .cursor-ring {
@@ -1774,7 +1774,6 @@ function handleContact(e) {
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
     if (!visible) { document.body.classList.remove('cursor-hidden'); visible = true; }
-    dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
   }, { passive: true });
 
   document.addEventListener('mouseleave', () => { document.body.classList.add('cursor-hidden'); visible = false; });
@@ -1782,16 +1781,22 @@ function handleContact(e) {
   document.addEventListener('mousedown',  () => document.body.classList.add('cursor-press'));
   document.addEventListener('mouseup',    () => document.body.classList.remove('cursor-press'));
 
-  const hoverSelector = 'a, button, input, textarea, select, label, [role="button"], .pill, .btn, .officer-link, .advisor-mail, .soc-btn, .firm-tag, .hero-dot, .hamburger, .signup-btn, .officer-card, .year-cell, .pillar, .advisor-card';
-  document.querySelectorAll(hoverSelector).forEach(el => {
-    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+  document.addEventListener('mouseover', e => {
+    if (e.target.closest('a, button, input, textarea, select, label, [role="button"], .pill, .btn, .officer-link, .advisor-mail, .soc-btn, .firm-tag, .hero-dot, .hamburger, .signup-btn, .officer-card, .year-cell, .pillar, .advisor-card')) {
+      document.body.classList.add('cursor-hover');
+    }
+  });
+  document.addEventListener('mouseout', e => {
+    if (e.target.closest('a, button, input, textarea, select, label, [role="button"], .pill, .btn, .officer-link, .advisor-mail, .soc-btn, .firm-tag, .hero-dot, .hamburger, .signup-btn, .officer-card, .year-cell, .pillar, .advisor-card')) {
+      document.body.classList.remove('cursor-hover');
+    }
   });
 
   function loop() {
-    rx += (mx - rx) * 0.18;
-    ry += (my - ry) * 0.18;
-    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+    dot.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%, -50%)`;
+    rx += (mx - rx) * 0.45;
+    ry += (my - ry) * 0.45;
+    ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%)`;
     requestAnimationFrame(loop);
   }
   loop();
