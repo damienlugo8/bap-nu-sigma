@@ -22,6 +22,42 @@
   a   { color: inherit; text-decoration: none; }
   button { cursor: pointer; font-family: inherit; border: none; background: none; }
 
+  /* ─── CUSTOM CURSOR ─── */
+  @media (hover: hover) and (pointer: fine) {
+    body { cursor: none; }
+    a, button, input, textarea, select, label, [role="button"], .pill, .btn,
+    .officer-link, .advisor-mail, .soc-btn, .firm-tag, .hero-dot,
+    .nav-links a, .hamburger, .signup-btn, .signup-input { cursor: none; }
+    .cursor-dot, .cursor-ring {
+      position: fixed; top: 0; left: 0; pointer-events: none; z-index: 10000;
+      transform: translate(-50%, -50%);
+      will-change: transform, width, height, opacity;
+    }
+    .cursor-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold-lt);
+      mix-blend-mode: difference;
+      transition: width .2s, height .2s, background .2s;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid rgba(184,144,90,.55);
+      mix-blend-mode: difference;
+      transition: width .25s cubic-bezier(.16,1,.3,1),
+                  height .25s cubic-bezier(.16,1,.3,1),
+                  border-color .2s, background .2s, opacity .25s;
+    }
+    body.cursor-hover .cursor-dot { width: 0; height: 0; }
+    body.cursor-hover .cursor-ring {
+      width: 56px; height: 56px;
+      background: rgba(184,144,90,.18);
+      border-color: rgba(184,144,90,.85);
+    }
+    body.cursor-press .cursor-ring { width: 28px; height: 28px; }
+    body.cursor-hidden .cursor-dot,
+    body.cursor-hidden .cursor-ring { opacity: 0; }
+  }
+
   /* ─── CUSTOM SCROLLBAR ─── */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--surface-dark); }
@@ -896,6 +932,10 @@
 <!-- Scroll progress -->
 <div id="progress-bar"></div>
 
+<!-- Custom cursor -->
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
 <!-- Back to top -->
 <button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1719,6 +1759,43 @@ function handleContact(e) {
   fetch(endpoint, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
     .then(r => finish(r.ok)).catch(() => finish(false));
 }
+
+// ── Custom cursor ──
+(() => {
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const dot  = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  if (!dot || !ring) return;
+
+  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+  let rx = mx, ry = my;
+  let visible = false;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    if (!visible) { document.body.classList.remove('cursor-hidden'); visible = true; }
+    dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
+  }, { passive: true });
+
+  document.addEventListener('mouseleave', () => { document.body.classList.add('cursor-hidden'); visible = false; });
+  document.addEventListener('mouseenter', () => { document.body.classList.remove('cursor-hidden'); visible = true; });
+  document.addEventListener('mousedown',  () => document.body.classList.add('cursor-press'));
+  document.addEventListener('mouseup',    () => document.body.classList.remove('cursor-press'));
+
+  const hoverSelector = 'a, button, input, textarea, select, label, [role="button"], .pill, .btn, .officer-link, .advisor-mail, .soc-btn, .firm-tag, .hero-dot, .hamburger, .signup-btn, .officer-card, .year-cell, .pillar, .advisor-card';
+  document.querySelectorAll(hoverSelector).forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+  });
+
+  function loop() {
+    rx += (mx - rx) * 0.18;
+    ry += (my - ry) * 0.18;
+    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
 
 // ── Hero slideshow ──
 (() => {
